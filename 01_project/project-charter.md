@@ -1681,28 +1681,28 @@ Analytics
 
 ```text
 01_project/
-├── roadmap.md
-└── glossary.md
+├── roadmap.md - 작성 완료
+└── glossary.md - 작성 완료
 
 02_architecture/
-├── system-architecture.md
-├── service-flow.md
-├── internal-protocol.md
-├── state-machine.md
-└── data-architecture.md
+├── system-architecture.md - 작성 완료
+├── service-flow.md - 작성 완료
+├── internal-protocol.md - ②작성 예정
+├── state-machine.md - ③작성 예쩡
+└── data-architecture.md - ①작성 예정
 ```
 
 이후:
 
 ```text
-03_brand
-04_knowledge
+03_brand - ⑤
+04_knowledge - ⑥
 05_decisions
 06_experiments
 07_content
-08_qa
-09_workflows
-10_schemas
+08_qa - ⑦
+09_workflows - ⑧
+10_schemas - ④`/*.json` 작성 예정
 11_integrations
 ```
 

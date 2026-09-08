@@ -3,6 +3,7 @@
 > Version: 0.1.0
 > Status: Initial Architecture Baseline
 > Parent: `01_project/project-charter.md`
+> Description: 시스템 구성
 
 ## 1. Architecture Goal
 
@@ -45,18 +46,18 @@ fal.ai Assets ─────────── ElevenLabs Voice
 
 ## 3. Component Responsibilities
 
-| Component | Responsibility |
-|---|---|
-| Git | Source of truth, version control, architecture, prompts/config history |
-| Notion | Dashboard, approval, operational queue |
-| Dify | Knowledge/RAG, domain context, AI workflow |
-| n8n | Trigger, orchestration, branching, parallel execution, retry, integration, scheduling |
-| OpenAI | Reasoning, structured generation, classification, Claim extraction, QA support |
-| fal.ai | Image/video generation |
-| ElevenLabs | TTS/voice generation |
-| Creatomate | Template assembly/rendering |
-| YouTube API | Upload, metadata, scheduling, publishing state |
-| Analytics | Performance measurement and learning signals |
+| Component   | Responsibility                                                                        |
+| ----------- | ------------------------------------------------------------------------------------- |
+| Git         | Source of truth, version control, architecture, prompts/config history                |
+| Notion      | Dashboard, approval, operational queue                                                |
+| Dify        | Knowledge/RAG, domain context, AI workflow                                            |
+| n8n         | Trigger, orchestration, branching, parallel execution, retry, integration, scheduling |
+| OpenAI      | Reasoning, structured generation, classification, Claim extraction, QA support        |
+| fal.ai      | Image/video generation                                                                |
+| ElevenLabs  | TTS/voice generation                                                                  |
+| Creatomate  | Template assembly/rendering                                                           |
+| YouTube API | Upload, metadata, scheduling, publishing state                                        |
+| Analytics   | Performance measurement and learning signals                                          |
 
 ## 4. Data Ownership
 

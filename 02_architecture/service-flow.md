@@ -3,6 +3,7 @@
 > Version: 0.1.0
 > Status: Initial Service Flow Baseline
 > Parent: `01_project/project-charter.md`
+> Description: 서비스 실행 흐름
 
 ## 1. End-to-End Flow
 
@@ -71,6 +72,7 @@ DEFER
 승인된 Topic을 Research Workflow로 전달한다.
 
 원칙:
+
 - 외부 자료는 untrusted input이다.
 - Source hierarchy를 적용한다.
 - Claim 후보를 추출한다.
@@ -118,6 +120,7 @@ Content Angle → Structure → Script → Voice Script → Scene Plan
 ## 9. Brand Check
 
 검사 항목:
+
 - Channel identity
 - Tone
 - Brand statement
@@ -139,6 +142,7 @@ Scene → Prompt → Image/Video → Asset Metadata → License Status
 ## 11. Asset QA
 
 검사:
+
 - Scene/Prompt 일치
 - Anatomical accuracy
 - Historical consistency
@@ -171,12 +175,14 @@ Scene Assets + Voice + Subtitle + Music/SFX + Brand Elements
 ## 14. Video QA
 
 ### Content
+
 - Script consistency
 - Claim consistency
 - Medical safety
 - Historical accuracy
 
 ### Technical
+
 - Duration
 - Aspect ratio
 - Resolution
@@ -185,6 +191,7 @@ Scene Assets + Voice + Subtitle + Music/SFX + Brand Elements
 - Frame errors
 
 ### Brand
+
 - Visual consistency
 - Typography
 - Brand line
@@ -197,6 +204,7 @@ FAIL 시 필요한 단계로 되돌린다.
 `READY → Schedule Validation → SCHEDULED`
 
 검사:
+
 - Title
 - Description
 - Metadata
@@ -268,6 +276,7 @@ Research
 사용자는 AI Factory의 모든 작업을 직접 수행하는 대신 `Review + Approve + Exception Handling`에 집중한다.
 
 초기 목표:
+
 - Shorts: `< 5–10 min human time`
 - Long-form: `< 15–20 min human time`
 

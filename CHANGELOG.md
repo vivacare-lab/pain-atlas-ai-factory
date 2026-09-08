@@ -1,10 +1,6 @@
 \# Changelog
 
-
-
 \## v0.1.0 — 2026-09-07
-
-
 
 \### Added
 
@@ -20,8 +16,6 @@
 
 \- Initial QA concept
 
-
-
 \### Decisions
 
 \- n8n selected as orchestration layer
@@ -35,4 +29,3 @@
 \- ElevenLabs selected as initial TTS candidate
 
 \- YouTube Data API selected for publishing
-

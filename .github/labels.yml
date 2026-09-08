@@ -1,0 +1,84 @@
+# .github/labels.yml
+- name: 'kind/bug'
+  color: 'E11D21'
+  description: '잘못된 동작, 오류, 시스템 크래시'
+
+- name: 'kind/feature'
+  color: '1D76DB'
+  description: '신규 기능 추가 또는 제안'
+
+- name: 'kind/enhancement'
+  color: '5319E7'
+  description: '기존 기능 개선 및 고도화'
+
+- name: 'kind/refactor'
+  color: 'A2EEEF'
+  description: '기능 수정 없는 코드 구조 개선'
+
+- name: 'kind/docs'
+  color: '006B75'
+  description: 'README, 위키 등 문서 수정 및 추가'
+
+- name: 'kind/chore'
+  color: 'CCCCCC'
+  description: '빌드 스크립트, 의존성 패키지 관리, 설정 변경'
+
+- name: 'status/needs-review'
+  color: 'FBCA04'
+  description: '담당자 지정 또는 코드/기획 검토 필요'
+
+- name: 'status/in-progress'
+  color: '0052CC'
+  description: '현재 개발/수정 진행 중'
+
+- name: 'status/blocked'
+  color: 'B60205'
+  description: '의존성이나 다른 이슈 때문에 진행 불가'
+
+- name: 'status/wontfix'
+  color: 'FFFFFF'
+  description: '재현 불가 또는 수정하지 않기로 결정됨'
+
+- name: 'status/duplicate'
+  color: 'CFD3D7'
+  description: '이미 존재하는 다른 이슈와 중복됨'
+
+- name: 'priority/critical'
+  color: 'D93F0B'
+  description: '서비스 중단 등 즉시 수정해야 하는 장애'
+
+- name: 'priority/high'
+  color: 'F9D0C4'
+  description: '다음 릴리스에 반드시 포함되어야 하는 작업'
+
+- name: 'priority/medium'
+  color: 'FEF2C0'
+  description: '일반적인 우선순위의 작업'
+
+- name: 'priority/low'
+  color: 'C2E0C6'
+  description: '언제든 수정해도 상관없는 부수적인 작업'
+
+- name: 'area/frontend'
+  color: '1F883D'
+  description: '웹/앱 화면, UI/UX 관련 작업'
+
+- name: 'area/backend'
+  color: '6236CD'
+  description: '서버, API, 데이터베이스 관련 작업'
+
+- name: 'area/design'
+  color: 'D1127B'
+  description: '에셋, 피그마, UI 디자인 관련 작업'
+
+- name: 'area/infra'
+  color: '000000'
+  description: 'CI/CD, AWS, 도커 등 인프라 설정'
+
+- name: 'good first issue'
+  color: '7057FF'
+  description: '프로젝트에 처음 기여하는 초보자용 쉬운 이슈'
+
+- name: 'help wanted'
+  color: '008672'
+  description: '오픈소스 기여자들의 도움이 필요한 이슈'
