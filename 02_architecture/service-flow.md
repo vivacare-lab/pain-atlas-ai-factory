@@ -1,14 +1,15 @@
 # 기묘한 통증도감 AI Factory Service Flow
-> Version: 0.1.0
+
+> Version: 0.2.0
 > Status: Initial Service Flow Baseline
 > Parent: `01_project/project-charter.md`
 > Description: 콘텐츠가 발견부터 발행·학습까지 이동하는 서비스 흐름
 
-## 1. 이 문서를 왜 만드는가?
+## 1. End-to-End Flow
 
 콘텐츠가 발견부터 발행·분석·학습까지 어떤 서비스 단계를 거치는지 정의한다.
 
-## 2. End-to-End Flow
+### 1.1 Workflow execution stages
 
 ```text
 DAILY_TRIGGER
@@ -17,7 +18,7 @@ DAILY_TRIGGER
 → AWAITING_CONFIRMATION
 → TOPIC_APPROVED
 → RESEARCHING
-→ PLANNED
+→ PLANNING
 → FACT_CHECK
 → SAFETY_CHECK
 → BRAND_CHECK
@@ -31,6 +32,47 @@ DAILY_TRIGGER
 → PUBLISHED
 → ANALYTICS_LEARNING
 ```
+
+이는 **워크플로 상태 및 실행 단계**에 해당하며, `lifecycle.current_state`에 기록되어서는 안 됩니다. 이 값들은 콘텐츠의 의미론적 라이프사이클 상태가 아니라, 자동화 프로세스가 현재 수행 중인 작업을 나타냅니다.
+
+### 1.2 Canonical Content State (표준 콘텐츠 상태)
+
+`Content Object.lifecycle.current_state`는 `content-object-design.md` 및 `10_schemas/content-object.json`에 정의된 다음의 표준 열거형(Enum) 값을 사용합니다.
+
+```text
+TOPIC_APPROVED
+→ RESEARCHING
+→ RESEARCH_COMPLETED
+→ SCRIPT_DRAFTED
+→ FACT_CHECKED
+→ SCRIPT_APPROVED
+→ SCENE_PLANNED
+→ ASSETS_READY
+→ VIDEO_QA_PASSED
+→ PUBLISHED
+→ ANALYTICS_READY
+→ LEARNING_COMPLETED
+```
+
+Content State는 **콘텐츠가 비즈니스적으로 의미 있는 특정 단계를 완료했음**을 나타냅니다. 워크플로 재시도(Retry), 제공업체 오류(Provider Failure), 오류 복구 분기(Repair Branch), 실행 단계(Execution Stage) 등은 이 필드에 기록하지 않으며, `Workflow/Runtime` 및 `Audit` 구조 하위에 별도로 기록됩니다.
+
+### 1.3 Relationship
+
+```text
+Content State
+= 콘텐츠가 의미적으로 어느 단계까지 완료되었는가
+
+Workflow State
+= 자동화가 현재 어떤 작업을 실행하고 있는가
+
+Example
+
+current_state = RESEARCHING
+workflow_stage = RESEARCH / source collection
+workflow.retry_count = 2
+```
+
+워크플로가 실패하더라도 `current_state`가 임의로 변경되어서는 안 됩니다. 실패 발생 시의 복구 작업은 실패 정책(Failure Policy)에 따라 재시도(Retry) → 복구(Repair) → QA 재실행(Re-run QA) 또는 담당자 검토(Human Review)의 절차를 거쳐 처리됩니다.
 
 ## 3. Daily Trend Discovery
 
@@ -75,6 +117,7 @@ DEFER
 승인된 Topic을 Research Workflow로 전달한다.
 
 원칙:
+
 - 외부 자료는 untrusted input이다.
 - Source hierarchy를 적용한다.
 - Claim 후보를 추출한다.
@@ -122,6 +165,7 @@ Content Angle → Structure → Script → Voice Script → Scene Plan
 ## 10. Brand Check
 
 검사 항목:
+
 - Channel identity
 - Tone
 - Brand statement
@@ -143,6 +187,7 @@ Scene → Prompt → Image/Video → Asset Metadata → License Status
 ## 12. Asset QA
 
 검사:
+
 - Scene/Prompt 일치
 - Anatomical accuracy
 - Historical consistency
@@ -175,12 +220,14 @@ Scene Assets + Voice + Subtitle + Music/SFX + Brand Elements
 ## 15. Video QA
 
 ### Content
+
 - Script consistency
 - Claim consistency
 - Medical safety
 - Historical accuracy
 
 ### Technical
+
 - Duration
 - Aspect ratio
 - Resolution
@@ -189,6 +236,7 @@ Scene Assets + Voice + Subtitle + Music/SFX + Brand Elements
 - Frame errors
 
 ### Brand
+
 - Visual consistency
 - Typography
 - Brand line
@@ -201,6 +249,7 @@ FAIL 시 필요한 단계로 되돌린다.
 `READY → Schedule Validation → SCHEDULED`
 
 검사:
+
 - Title
 - Description
 - Metadata
@@ -272,6 +321,7 @@ Research
 사용자는 AI Factory의 모든 작업을 직접 수행하는 대신 `Review + Approve + Exception Handling`에 집중한다.
 
 초기 목표:
+
 - Shorts: `< 5–10 min human time`
 - Long-form: `< 15–20 min human time`
 

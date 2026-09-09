@@ -75,6 +75,14 @@ Analytics      → canonical performance record
 
 책임이 다른 시스템의 데이터를 불필요하게 복제하지 않는다.
 
+### 5-1. Content Object 아키텍처 연결 (추적성)
+
+`Content Object`는 시스템의 **Aggregate Root**로 기능하며, 구체적인 도메인 모델과 데이터 구조는 아래 연계 문서를 참조한다.
+
+- **개념 및 거버넌스 정의:** [`data-architecture.md`](./data-architecture.md) - 콘텐츠 생명주기 데이터를 객체와 관계로 연결하고 저장·소유·추적하는 구조
+- **도메인 및 컴포넌트 설계:** [`content-object-design.md`](./content-object-design.md) — Aggregate Root로서의 비즈니스 로직 및 생명주기 전이 규칙 정의
+- **물리 스키마 정의:** [`10_schemas/content-object.json`](/10_schemas/content-object.json) — 최종 영속화 및 인터페이스를 위한 JSON Schema 사양
+
 ## 6. Core Data Objects
 
 ```text
