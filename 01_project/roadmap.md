@@ -1,8 +1,7 @@
 # 기묘한 통증도감 AI Factory Roadmap
-
 > Version: 0.1.0  
 > Status: Initial Roadmap  
-> Based on: `project-charter.md v0.1.0`
+> Based on: `project-charter.md v0.1.0`  
 > Description: 개발/구축 순서
 
 ## 1. Roadmap Principles
@@ -15,19 +14,19 @@
 
 ## 2. Phase Overview
 
-| Phase | 목표               | 핵심 결과                      |
-| ----- | ------------------ | ------------------------------ |
-| 0     | Foundation         | 프로젝트 기준과 문서 체계 확립 |
-| 1     | Trend Discovery    | 트렌드 수집 및 주제 추천       |
-| 2     | Human Confirmation | 승인/거절/수정/보류 운영       |
-| 3     | AI Content Core    | 조사·Claim·대본 자동화         |
-| 4     | Validation         | 의학·역사·근거 검증            |
-| 5     | Visual             | 장면·이미지·영상 자산 자동화   |
-| 6     | Voice              | 음성 생성 및 검수              |
-| 7     | Rendering          | 영상 자동 조립·렌더링          |
-| 8     | Video QA           | 최종 영상 품질관리             |
-| 9     | Publishing         | 예약 발행 자동화               |
-| 10    | Learning           | 분석·비용·성과 기반 학습       |
+| Phase | 목표 | 핵심 결과 |
+|---|---|---|
+| 0 | Foundation | 프로젝트 기준과 문서 체계 확립 |
+| 1 | Trend Discovery | 트렌드 수집 및 주제 추천 |
+| 2 | Human Confirmation | 승인/거절/수정/보류 운영 |
+| 3 | AI Content Core | 조사·Claim·대본 자동화 |
+| 4 | Validation | 의학·역사·근거 검증 |
+| 5 | Visual | 장면·이미지·영상 자산 자동화 |
+| 6 | Voice | 음성 생성 및 검수 |
+| 7 | Rendering | 영상 자동 조립·렌더링 |
+| 8 | Video QA | 최종 영상 품질관리 |
+| 9 | Publishing | 예약 발행 자동화 |
+| 10 | Learning | 분석·비용·성과 기반 학습 |
 
 ## 3. Phase 0 — Foundation
 
@@ -80,25 +79,20 @@ Retention, Completion, Engagement, Subscriber Conversion, Topic Performance, Cos
 ## 14. Production Scaling
 
 ### Phase A
-
 `4 Shorts + 2 Long-form / week`
 
 ### Phase B
-
 `5–7 Shorts + 2 Long-form / week`
 
 ### Phase C
-
 `1 Short / day + 2–3 Long-form / week`
 
 ### Phase D
-
 `Multi-channel / Multi-format`
 
 ## 15. Time Optimization
 
 초기 목표:
-
 - Shorts Human Time: `< 5–10 min`
 - Long-form Human Time: `< 15–20 min`
 - Shorts Machine Runtime: `20–30 min`
