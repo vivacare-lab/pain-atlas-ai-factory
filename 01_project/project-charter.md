@@ -1,6 +1,6 @@
 # 기묘한 통증도감 AI Factory
 
-## Project Charter v0.1.0
+## Project Charter v0.2.0
 
 > **Status:** Final Review Candidate
 >
@@ -725,44 +725,44 @@ Analytics
 
 ---
 
-# 15. State Machine
 
-기본 상태는 다음과 같다.
+# 15. State Model
+
+AI Factory는 실행 Workflow와 Content Object의 Canonical Content State를 분리한다.
+
+## 15.1 Workflow Stage
+
+Workflow Stage는 AI Factory가 현재 어떤 작업을 실행하고 있는지를 표현한다.
+세부 실행 순서는 `02_architecture/service-flow.md`가 정의한다.
+
+Workflow Stage와 `Content Object.lifecycle.current_state`는 동일한 상태 집합이 아니다.
+
+## 15.2 Canonical Content State
+
+Content Object의 `lifecycle.current_state`는 다음 12개 값만 사용한다.
 
 ```text
-DAILY_TRIGGER
-→ TREND_DISCOVERY
-→ TOPIC_RECOMMENDING
-→ AWAITING_CONFIRMATION
-→ TOPIC_APPROVED
+TOPIC_APPROVED
 → RESEARCHING
-→ PLANNED
-→ FACT_CHECK
-→ SAFETY_CHECK
-→ BRAND_CHECK
-→ ASSET_GENERATION
-→ ASSET_QA
-→ RENDERING
-→ VIDEO_QA
-→ SCHEDULING
-→ SCHEDULED
-→ PUBLISHING
+→ RESEARCH_COMPLETED
+→ SCRIPT_DRAFTED
+→ FACT_CHECKED
+→ SCRIPT_APPROVED
+→ SCENE_PLANNED
+→ ASSETS_READY
+→ VIDEO_QA_PASSED
 → PUBLISHED
-→ ANALYTICS_LEARNING
+→ ANALYTICS_READY
+→ LEARNING_COMPLETED
 ```
 
-실패 시:
+이 상태 집합과 허용 전이는 `02_architecture/state-machine.md`가 정의하며,
+실행 Workflow는 `02_architecture/service-flow.md`가 정의한다.
 
-```text
-GENERATE
-→ QA
-→ FAIL
-→ REPAIR / REGENERATE
-→ QA
-→ PASS
-```
+## 15.3 Failure / Retry
 
-각 단계는 가능한 한 독립적으로 재실행할 수 있어야 한다.
+실패와 재시도는 Workflow 실행의 상태이며 Canonical Content State를 임의로 변경하지 않는다.
+복구가 필요한 경우 해당 Workflow Stage를 재실행하거나 Human Review로 전환한다.
 
 ---
 

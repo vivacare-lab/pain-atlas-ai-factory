@@ -1,8 +1,8 @@
 # 기묘한 통증도감 AI Factory Roadmap
-> Version: 0.1.0  
+
+> Version: 0.1.1  
 > Status: Initial Roadmap  
-> Based on: `project-charter.md v0.1.0`  
-> Description: 개발/구축 순서
+> Based on: `project-charter.md v0.1.0`
 
 ## 1. Roadmap Principles
 
@@ -113,3 +113,16 @@ Functional
 ```
 
 고위험 자동화에는 Human Override가 남아 있어야 한다.
+
+
+## 12. Phase 0 Completion Gate Update
+
+Phase 0은 다음 항목까지 충족해야 완료로 판정한다.
+
+- Canonical Content State가 확정되어 있다.
+- Workflow State와 Content State가 분리되어 있다.
+- Content Object 설계와 Data Architecture가 동일한 구조를 가리킨다.
+- `10_schemas/content-object.json`이 실제 JSON Schema로 존재한다.
+- JSON Schema가 Canonical Content State를 검증한다.
+- 주요 빈 문서(Brand / QA / Integration)의 상태가 명시되어 있다.
+- State/Schema/Protocol 변경이 Decision Log 또는 Changelog에 추적된다.

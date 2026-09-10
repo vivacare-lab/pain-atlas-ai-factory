@@ -1,558 +1,556 @@
 # 기묘한 통증도감 AI Factory Data Architecture
 
-> Version: 0.1.0
+> Version: 0.1.1
 > Status: Initial Data Architecture Baseline
 > Parent: `02_architecture/system-architecture.md`
-> Description: 콘텐츠 생명주기 데이터를 객체와 관계로 연결하고 저장·소유·추적하는 구조
+> Description: AI Factory의 핵심 데이터 객체, 소유권, 관계, 수명주기 및 Content Object 연결 규칙
 
-## 1. Purpose
+---
 
-Data Architecture는 AI Factory에서 생성되는 정보를 **어디에 저장하고, 어떤 Object로 연결하며, 어떤 시스템이 무엇을 소유하는지** 정의한다.
+## 0. 이 문서를 왜 만드는가?
 
-목표는 다음과 같다.
+AI Factory는 Trend, Topic, Research, Claim, Evidence, Script, Scene, Asset, QA, Publication, Analytics, Learning 등 서로 다른 데이터를 여러 단계에서 생성한다.
 
-- AI 간 자유형 텍스트 전달 최소화
-- Claim과 Evidence의 추적성 확보
-- 콘텐츠 전체 Lifecycle 연결
-- 재생성/수정/재사용 가능성 확보
-- Analytics를 다음 의사결정에 연결
-- Git/Notion/Database 간 역할 중복 최소화
+이 문서는 이 데이터들이 **어떤 객체로 분리되고, 서로 어떻게 연결되며, 어떤 시스템이 무엇을 책임지는지** 정의한다.
 
-## 2. Data Ownership
+특히 `Content Object`를 콘텐츠 생명주기의 중심 연결점으로 명확히 정의하여, 이후 `10_schemas/`의 실제 JSON Schema가 임의로 설계되지 않도록 하는 것이 목적이다.
+
+---
+
+## 1. 이 문서에서 반드시 이해해야 하는 것
+
+### 1.1 Content Object는 모든 데이터를 담는 거대한 JSON이 아니다.
+
+`Content Object`는 콘텐츠의 정체성, 현재 상태, 목적, 주요 참조와 요약 정보를 관리하는 **Aggregate Root**다.
+
+상세 데이터는 독립 객체로 분리하고 Content Object에서는 참조한다.
+
+```text
+Content Object
+    ↓
+Research / Claim / Evidence / Script / Scene / Asset
+    ↓
+QA / Publication / Analytics / Learning
+```
+
+### 1.2 현재 상태와 과거 이력을 분리한다.
+
+Content Object는 현재 사용 중인 Script, Scene, Asset, QA 등의 참조를 관리한다.
+
+과거 버전과 상세 실행 기록은 각 독립 객체 또는 Audit Log에서 보존한다.
+
+### 1.3 가장 중요한 추적 경로
+
+```text
+Script Segment
+      ↓
+Claim
+      ↓
+Evidence
+      ↓
+Source
+```
+
+```text
+Script Segment
+      ↓
+Scene
+      ↓
+Asset
+```
+
+```text
+Publication
+      ↓
+Analytics
+      ↓
+Learning
+      ↓
+Decision
+```
+
+---
+
+## 2. AI Factory에서 이 문서가 담당하는 역할
+
+Data Architecture는 다음을 결정한다.
+
+1. 핵심 데이터 객체의 경계
+2. 객체 간 참조 관계
+3. 데이터 소유권
+4. Content Object의 위치와 책임
+5. 현재 값과 이력 데이터의 분리 원칙
+6. Schema 설계의 상위 규칙
+7. Git / Notion / Dify / n8n 등 실행 시스템과 데이터의 관계
+
+실제 필드 타입과 JSON Schema의 상세 제약은 `10_schemas/`에서 정의한다.
+
+---
+
+## 3. 실제 시스템에서는 어떻게 사용되는가?
+
+### 3.1 전체 데이터 흐름
+
+```text
+Trend Source
+    ↓
+Trend Object
+    ↓
+Topic Recommendation
+    ↓
+Human Approval
+    ↓
+Content Object 생성
+    ↓
+Research Package
+    ↓
+Source / Evidence / Claim
+    ↓
+Script Version
+    ↓
+Scene Plan
+    ↓
+Asset Set
+    ↓
+QA Record
+    ↓
+Publication Record
+    ↓
+Analytics Snapshot
+    ↓
+Learning Record
+    ↓
+Next Decision
+```
+
+### 3.2 Content Object의 위치
+
+Content Object는 위 흐름 전체를 하나의 `content_id`로 연결한다.
+
+```text
+Content Object
+├── identity
+├── lifecycle
+├── classification
+├── intent
+├── references
+├── current_outputs
+├── quality_summary
+├── publication_summary
+├── performance_summary
+├── learning_summary
+├── cost_summary
+├── provenance_summary
+├── workflow
+└── audit_summary
+```
+
+상세 설계는 다음 문서를 따른다.
+
+`02_architecture/content-object-design.md`
+
+---
+
+## 4. 구현 세부사항
+
+### 4.1 Core Data Objects
+
+```text
+Trend Object
+Topic Recommendation
+Content Object
+Research Package
+Source
+Evidence
+Claim
+Script Version
+Scene Plan
+Asset
+Asset Set
+QA Record
+Publication Record
+Analytics Snapshot
+Learning Record
+Decision Record
+Audit Event
+```
+
+### 4.2 객체별 기본 책임
+
+| Object | 책임 |
+|---|---|
+| Trend Object | 외부/내부 데이터에서 발견된 트렌드의 정규화된 기록 |
+| Topic Recommendation | 채널 적합도와 추천 근거를 포함한 제작 후보 |
+| Content Object | 하나의 콘텐츠 생명주기를 연결하는 중심 객체 |
+| Research Package | 특정 콘텐츠의 조사 실행 결과와 조사 상태 |
+| Source | 외부 근거의 출처와 메타데이터 |
+| Evidence | Source에서 확인된 구체적인 근거 |
+| Claim | 콘텐츠에서 사용할 수 있는 검증 대상 주장 |
+| Script Version | 특정 버전의 대본 |
+| Scene Plan | Script Segment와 시각적 표현의 연결 |
+| Asset | 실제 이미지/영상/음성 등 생성 또는 수집 자산 |
+| Asset Set | 특정 콘텐츠 제작에 사용되는 Asset 묶음 |
+| QA Record | 특정 대상에 대한 검증 실행 결과 |
+| Publication Record | 플랫폼별 발행 및 예약 정보 |
+| Analytics Snapshot | 특정 시점의 성과 관측값 |
+| Learning Record | Analytics를 해석하여 도출한 학습과 다음 행동 |
+| Decision Record | 사람이 내렸거나 시스템이 기록한 중요한 의사결정 |
+| Audit Event | 상태 전이와 주요 시스템 행동의 불변 기록 |
+
+### 4.3 데이터 소유권
 
 ```text
 Git
-└─ Canonical project knowledge
-   ├─ Architecture
-   ├─ Brand
-   ├─ Rules
-   ├─ Prompts
-   ├─ Schemas
-   └─ Version history
+→ canonical project knowledge / version-controlled definitions
 
 Notion
-└─ Operational workspace
-   ├─ Approval
-   ├─ Queue
-   ├─ Human Review
-   ├─ Production status
-   └─ Editorial decisions
+→ operational queue / human interaction
 
-Operational DB / Workflow Data Store
-└─ Runtime records
-   ├─ Object state
-   ├─ IDs
-   ├─ Execution history
-   ├─ Retry
-   └─ Integration status
+Content Object
+→ canonical content lifecycle record
 
-Object Storage
-└─ Large binary assets
-   ├─ Images
-   ├─ Video
-   ├─ Audio
-   └─ Rendered files
+Evidence Ledger
+→ canonical claim/source traceability
 
-Analytics Store
-└─ Performance records
+Analytics
+→ canonical performance record
 ```
 
-구체적인 Database 제품은 구현 단계에서 결정한다. 초기 단계에서는 특정 DB 제품에 종속되지 않는다.
+동일한 의미의 데이터를 여러 시스템에서 서로 다른 원본으로 관리하지 않는다.
 
-## 3. Core Entity Model
+### 4.4 Content Object와 Supporting Object의 경계
+
+#### Content Object에 직접 포함
+
+- 콘텐츠 식별 정보
+- 콘텐츠 계보 정보
+- 현재 상태
+- 콘텐츠 분류
+- 제작 목적
+- 핵심 질문과 Hook
+- 주요 객체 참조
+- 현재 사용 중인 산출물 버전
+- QA 요약
+- 발행 요약
+- 성과 요약
+- 학습 요약
+- 비용 요약
+- Provenance 요약
+- Audit 요약
+
+#### 독립 객체로 분리
+
+- 원문 Source 전문
+- Evidence 상세
+- 전체 Research 결과
+- Claim 상세 기록
+- 대본 전체 버전 이력
+- 장면 계획 전체 버전 이력
+- 실제 이미지/영상/음성 파일
+- Prompt 전문
+- Model Configuration
+- 전체 Analytics 시계열
+- 상세 QA 실행 기록
+- 불변 Audit Log
+- Secret / Credential
+
+### 4.5 Content ID와 버전의 관계
 
 ```text
-Trend
+Content ID
+= 콘텐츠의 정체성
+
+Artifact Version
+= 대본/장면/Asset 등 산출물의 버전
+
+Workflow Version
+= 자동화 Workflow의 버전
+
+Model / Prompt / Brand / QA Rule Version
+= 해당 실행에 사용된 구성요소의 버전
+```
+
+대본이 `0.2.0 → 0.3.0`으로 변경되어도 같은 콘텐츠 계보라면 `content_id`는 변경하지 않는다.
+
+### 4.6 Content Object와 State Machine의 관계
+
+```text
+State Machine
+= 어떤 상태 전이가 허용되는가
+
+Content Object
+= 현재 어떤 상태에 있는가
+
+Artifact Object
+= 해당 상태에서 어떤 결과물이 생성되었는가
+```
+
+따라서 `current_state`는 Content Object에 저장하되, 상태 전이의 허용 규칙 자체는 State Machine 문서에서 관리한다.
+
+### 4.7 Provenance 관계
+
+AI Factory는 최종 결과에서 중요한 Claim과 Asset을 원천까지 역추적할 수 있어야 한다.
+
+```text
+Source
   ↓
-Topic Recommendation
-  ↓
-Topic
-  ↓
-Content
-  ├→ Claim
-  │    └→ Evidence → Source
-  ├→ Scene
-  │    └→ Asset
-  ├→ Voice
-  ├→ Schedule
-  ├→ QA Result
-  ├→ Audit Event
-  └→ Analytics Record
-```
-
-## 4. Trend Object
-
-Trend는 외부에서 발견한 원시 관심 신호를 정규화한 객체다.
-
-```text
-trend_id
-source_id
-source_type
-captured_at
-title
-summary
-keywords
-trend_score
-source_url
-raw_reference
-channel_relevance
-risk_level
-```
-
-Trend 자체가 Topic은 아니다.
-
-## 5. Topic Recommendation Object
-
-추천 엔진의 판단 결과다.
-
-```text
-recommendation_id
-topic_id
-recommendation_date
-category
-format
-why_now
-channel_relevance
-content_angle
-expected_audience
-risk_level
-duplicate_check
-recommendation_score
-source_refs
-status
-```
-
-추천 Score는 절대적 진실이 아니라 **의사결정 지원 신호**다.
-
-## 6. Topic Object
-
-Topic은 승인 전후의 콘텐츠 아이디어를 안정적으로 식별한다.
-
-```text
-topic_id
-title
-category
-series
-angle
-target_audience
-format
-trend_refs
-evergreen_flag
-historical_flag
-medical_risk_level
-status
-created_at
-updated_at
-```
-
-## 7. Content Object
-
-Content Object는 실제 제작되는 콘텐츠의 중심 객체다.
-
-```text
-content_id
-topic_id
-format
-status
-script_version
-brand_version
-model_version
-workflow_version
-prompt_version
-qa_rule_version
-claim_refs
-scene_refs
-asset_refs
-schedule_ref
-analytics_ref
-human_review_required
-created_at
-updated_at
-```
-
-Content Object는 모든 하위 Object를 직접 보유하기보다 Reference를 통해 연결한다.
-상세 설계는 `02_architecture/content-object-design.md`에서 관리한다.
-
-## 8. Claim Object
-
-Claim은 대본에 사용될 수 있는 사실적 주장 단위다.
-
-```text
-claim_id
-content_id
-claim_text
-claim_type
-risk_level
-confidence
-source_refs
-evidence_refs
-approved_expression
-limitations
-status
-```
-
-Claim Type 예:
-
-```text
-MEDICAL
-HISTORICAL
-STATISTICAL
-MECHANISM
-ADVICE
-```
-
-## 9. Source Object
-
-Source는 자료의 출처다.
-
-```text
-source_id
-source_type
-title
-author_or_organization
-publication_date
-url
-retrieved_at
-reliability_class
-license_notes
-```
-
-의료 자료와 역사 자료는 서로 다른 Source Hierarchy를 적용할 수 있다.
-
-## 10. Evidence Object
-
-Evidence는 Source 전체가 아니라 Claim을 지지하는 구체적인 근거다.
-
-```text
-evidence_id
-source_id
-location_reference
-excerpt_or_summary
-support_level
-limitations
-verified_at
-verified_by
-```
-
-핵심 관계:
-
-```text
-Source ≠ Evidence ≠ Claim
-```
-
-## 11. Provenance Chain
-
-중요 정보는 다음과 같이 역추적할 수 있어야 한다.
-
-```text
-Final Video
-   ↓
-Scene
-   ↓
-Script Segment
-   ↓
-Claim
-   ↓
 Evidence
-   ↓
-Source
+  ↓
+Claim
+  ↓
+AI Interpretation
+  ↓
+Approved Expression
+  ↓
+Script
+  ↓
+Scene
+  ↓
+Asset / Final Video
 ```
 
-필요한 경우 반대 방향도 가능해야 한다.
+이 구조는 의료·역사 콘텐츠의 사실성 검증과 사후 감사에 사용한다.
+
+### 4.8 Progressive Completion
+
+Content Object는 생성 시점부터 모든 필드를 완성할 필요가 없다.
+
+다음 세 상태를 구분한다.
 
 ```text
-Source
-→ 영향을 받은 Claim
-→ Script
-→ Scene
-→ Asset
-→ Final Content
-```
-
-## 12. Scene Object
-
-Scene은 영상 구성의 최소 논리 단위다.
-
-```text
-scene_id
-content_id
-sequence
-purpose
-narration_ref
-visual_description
-prompt_ref
-asset_refs
-duration_target
-transition
-text_overlay
-status
-```
-
-Scene을 분리하면 특정 장면만 재생성할 수 있다.
-
-## 13. Asset Object
-
-Asset은 실제 생성/사용되는 파일 또는 외부 참조다.
-
-```text
-asset_id
-scene_id
-asset_type
-provider
-model
-prompt_version
-file_ref
-source_type
-license_status
-quality_status
-generation_cost
-created_at
-```
-
-Asset Type:
-
-```text
-IMAGE
-VIDEO
-AUDIO
-MUSIC
-SFX
-FONT
-```
-
-## 14. QA Result Object
-
-QA는 단순 Boolean이 아니라 무엇을 검사했는지 기록한다.
-
-```text
-qa_id
-object_id
-qa_type
-rule_version
-status
-score
-failures
-warnings
-checked_at
-reviewer
+missing = 아직 생성되지 않음
+null    = 해당 없음
+empty   = 생성되었지만 값이 없음
 ```
 
 예:
 
-```text
-MEDICAL_QA
-HISTORICAL_QA
-BRAND_QA
-ASSET_QA
-VOICE_QA
-VIDEO_QA
-PUBLISH_QA
+```yaml
+publication_summary:
+  publication_refs: []
+  published_platforms: []
+  latest_publication_at: null
 ```
 
-## 15. Schedule Object
+이는 발행 객체가 아직 생성되지 않았음을 의미한다.
+
+### 4.9 재사용과 파생 콘텐츠
+
+하나의 콘텐츠에서 Short, Long-form, Reel, Blog 등 여러 파생물이 생성될 수 있다.
 
 ```text
-schedule_id
-content_id
-platform
-privacy_status
-scheduled_at
-publish_status
-metadata_version
-synthetic_media_disclosure
-thumbnail_ref
-verified_at
+Root Content
+├── YouTube Short
+├── YouTube Long-form
+├── Instagram Reel
+└── Blog Article
 ```
 
-Schedule과 Publish 결과를 분리하여 계획과 실제 결과를 구분한다.
-
-## 16. Analytics Record
+이를 위해 Content Object는 다음 계보 정보를 가진다.
 
 ```text
-analytics_id
-content_id
-platform
-period
-views
-average_view_duration
-average_view_percentage
-retention
-likes
-comments
-shares
-subscribers_gained
-cost
+parent_content_id
+root_content_id
 ```
 
-Views만으로 성공을 판단하지 않는다.
+Asset 또한 여러 콘텐츠에서 재사용할 수 있으므로 Asset의 정체성과 콘텐츠별 사용 관계를 분리한다.
 
-## 17. Audit Event
+### 4.10 QA와 Audit
 
-Audit Event는 변경 이력과 의사결정을 연결한다.
+QA는 현재 상태 요약과 상세 실행 기록을 분리한다.
 
 ```text
-audit_event_id
-object_id
-event_type
-actor
-from_state
-to_state
-reason
-input_refs
-output_refs
+Content Object
+→ latest_qa_record_ref
+→ overall_status
+→ blocking_issues
+→ required_human_review
+```
+
+상세 QA 기록은 별도 `QA Record`로 보존한다.
+
+Audit 역시 Content Object에는 요약과 최신 이벤트 참조만 저장하고 상세 이벤트는 별도 `Audit Event`로 관리한다.
+
+### 4.11 Analytics와 Learning
+
+Analytics는 관측값이고 Learning은 해석 및 다음 행동이다.
+
+```text
+Analytics Snapshot
+= 무엇이 발생했는가
+
+Learning Record
+= 무엇을 배웠는가
+
+Decision Record
+= 그래서 무엇을 바꿀 것인가
+```
+
+Analytics를 단순 조회값으로 덮어쓰지 않고 관측 시점을 보존한다.
+
+### 4.12 비용 데이터
+
+콘텐츠 단위 비용을 추적할 수 있어야 한다.
+
+```text
+Research
+LLM
+Image
+Video
+TTS
+Render
+Storage
+```
+
+Content Object에는 총 비용과 요약만 저장하고 상세 비용 기록은 별도 객체로 분리할 수 있도록 한다.
+
+### 4.13 버전 및 Provenance 참조
+
+Content Object는 다음 실행 구성요소를 참조할 수 있어야 한다.
+
+```text
 model_version
+prompt_version
 workflow_version
-timestamp
+template_version
+brand_version
+qa_rule_version
+config_version
 ```
 
-예:
+이를 통해 동일 콘텐츠가 언제, 어떤 설정으로 생성·검증되었는지 추적한다.
+
+### 4.14 Schema 계층
+
+설계 문서와 실제 Schema를 분리한다.
+
+```text
+02_architecture/content-object-design.md
+        ↓
+10_schemas/content-object.json
+        ↓
+07_content/ actual content instances
+```
+
+하위 객체도 독립 Schema로 확장한다.
+
+```text
+content-object.json
+research-package.json
+claim.json
+evidence.json
+script.json
+scene-plan.json
+asset.json
+asset-set.json
+qa-record.json
+publication-record.json
+analytics-snapshot.json
+learning-record.json
+audit-event.json
+```
+
+초기 구현에서는 모든 Schema를 한 번에 만들지 않고, Content Object를 시작점으로 단계적으로 확장한다.
+
+---
+
+## 5. 설계 불변 원칙
+
+1. `content_id`는 콘텐츠 계보 전체에서 안정적이어야 한다.
+2. Content Object는 상세 데이터 저장소가 아니라 중심 Aggregate Root다.
+3. 현재 참조와 과거 이력을 분리한다.
+4. Claim과 Evidence는 재사용 가능한 독립 객체로 관리한다.
+5. Script Segment는 Claim을 추적할 수 있어야 한다.
+6. Scene은 Script Segment를 참조한다.
+7. Asset은 콘텐츠와 독립적으로 식별한다.
+8. Publication은 플랫폼별로 분리한다.
+9. Analytics는 Snapshot으로 보존한다.
+10. Learning은 Analytics와 분리한다.
+11. QA 상세 기록은 삭제하지 않는다.
+12. Workflow 실패는 콘텐츠의 의미 있는 상태와 분리한다.
+13. 외부 입력은 실행 명령이 아닌 데이터로 취급한다.
+14. Secret은 Content Object나 Git에 저장하지 않는다.
+
+---
+
+## 6. 다음 단계와 완료 기준
+
+### 다음 단계
+
+`02_architecture/content-object-design.md`의 설계를 기준으로 `10_schemas/content-object.json`을 작성한다.
+
+### 완료 기준
+
+- Content Object의 필드 구조가 설계 문서와 일치한다.
+- 필드의 필수/선택 여부가 정의된다.
+- Enum과 기본값이 필요한 항목이 명확하다.
+- State Machine의 상태명과 충돌하지 않는다.
+- 다른 객체의 상세 데이터를 중복 저장하지 않는다.
+- Provenance와 Audit 참조를 유지한다.
+- 실제 콘텐츠 인스턴스가 생성될 수 있는 수준의 Schema가 된다.
+
+
+## 5. Canonical Content Object Contract
+
+`Content Object`의 실제 중심 구조는 `content-object-design.md`를 기준으로 한다.
+
+```text
+Content Object
+├── identity
+├── lifecycle
+├── classification
+├── intent
+├── references
+├── current_outputs
+├── quality_summary
+├── publication_summary
+├── performance_summary
+├── learning_summary
+├── cost_summary
+├── provenance_summary
+├── workflow
+└── audit_summary
+```
+
+### 5.1 Lifecycle
+
+`lifecycle.current_state`는 다음 Canonical Content State만 사용한다.
 
 ```text
 TOPIC_APPROVED
-SCRIPT_REVISED
-MEDICAL_REVIEW_APPROVED
-ASSET_REGENERATED
-VIDEO_QA_FAILED
-PUBLISH_VERIFIED
+RESEARCHING
+RESEARCH_COMPLETED
+SCRIPT_DRAFTED
+FACT_CHECKED
+SCRIPT_APPROVED
+SCENE_PLANNED
+ASSETS_READY
+VIDEO_QA_PASSED
+PUBLISHED
+ANALYTICS_READY
+LEARNING_COMPLETED
 ```
 
-## 18. Relationship Rules
+Workflow 실행 단계는 `workflow.workflow_stage`로 분리한다.
 
-### One-to-Many
+### 5.2 Schema hierarchy
 
 ```text
-Topic → Content
-Content → Claim
-Content → Scene
-Scene → Asset
-Content → QA Result
-Content → Audit Event
+data-architecture.md
+        ↓
+content-object-design.md
+        ↓
+10_schemas/content-object.json
+        ↓
+runtime Content Object instances
 ```
 
-### Many-to-Many
+`10_schemas`는 상위 문서에 없는 새로운 도메인 구조를 발명하지 않는다.
 
-```text
-Claim ↔ Source
-Claim ↔ Evidence
-Content ↔ Trend
-```
+### 5.3 Null / Empty / Missing
 
-Many-to-many 관계는 Reference Table 또는 명시적 Reference Object로 관리한다.
+- missing: 아직 생성되지 않았거나 계약상 제공하지 않는 값
+- null: 필드 자체는 의미가 있으나 현재 값이 없음
+- []: 배열 필드는 존재하지만 항목이 없음
 
-## 19. Immutable vs Mutable Data
-
-### 가능한 한 Immutable
-
-- Source 원본 정보
-- Evidence snapshot
-- Audit Event
-- Published analytics snapshot
-- 원본 Asset
-
-### Mutable
-
-- Recommendation status
-- Content current state
-- Draft metadata
-- Queue status
-- Current script version pointer
-
-수정 가능한 데이터도 이전 Version 또는 Audit Event를 통해 변경 이력을 추적한다.
-
-## 20. File and Binary Storage
-
-Git에는 대용량 생성 Asset을 직접 저장하지 않는다.
-
-```text
-Git
-→ Rules / Metadata / Prompts / Schemas
-
-Object Storage
-→ Image / Video / Audio / Render
-```
-
-Content Object에는 실제 파일 자체보다 `file_ref`를 저장한다.
-
-## 21. Notion Data Model
-
-Notion은 운영 UI에 적합한 정보만 노출한다.
-
-예상 Database:
-
-```text
-Topics
-Production Queue
-Human Review
-Content Calendar
-Published Content
-Experiments
-```
-
-Notion에서 편집한 운영 상태는 Audit Trail을 통해 기록되어야 한다.
-
-## 22. Git Data Model
-
-Git은 다음의 변경 이력을 관리한다.
-
-```text
-Project Charter
-Architecture
-Brand Bible
-Safety Rules
-Source Hierarchy
-Schemas
-Prompts
-Workflow Definitions
-QA Rules
-Decision Logs
-Experiments
-```
-
-Git은 실시간 Production Queue의 주 저장소가 아니다.
-
-## 23. Data Lifecycle
-
-```text
-COLLECT
-→ NORMALIZE
-→ SCORE
-→ APPROVE
-→ RESEARCH
-→ VALIDATE
-→ PRODUCE
-→ QA
-→ PUBLISH
-→ MEASURE
-→ LEARN
-```
-
-각 단계에서 생성된 Data는 다음 단계의 입력이 되며, 중요한 결과는 Audit/Provenance로 연결된다.
-
-## 24. Data Retention Principles
-
-초기 구현에서는 세부 보존 기간을 과도하게 확정하지 않는다.
-
-다만 다음은 장기 보존 가치가 높다.
-
-- 최종 Content Object
-- Claim/Evidence 관계
-- Source metadata
-- 최종 Script/Prompt version
-- QA 결과
-- Publish 기록
-- Analytics 핵심 지표
-- Human decision
-- Audit Event
-
-## 25. Data Architecture Principles
-
-1. One object, one canonical identity.
-2. Reference instead of unnecessary duplication.
-3. Source and Evidence must remain traceable.
-4. Large binaries belong outside Git.
-5. Operational state belongs in an operational system.
-6. Historical decisions should be append-only where practical.
-7. Version pointers must identify the exact generation context.
-8. Analytics must connect back to Content and Topic.
-9. Data model should remain provider-neutral.
-10. Do not design a database field unless it supports an actual decision, workflow, audit, or analysis need.
+이 세 상태를 임의로 동일시하지 않는다.

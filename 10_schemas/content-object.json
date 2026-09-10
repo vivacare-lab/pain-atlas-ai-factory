@@ -1,0 +1,425 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/vivacare-lab/pain-atlas-ai-factory/blob/main/10_schemas/content-object.json",
+  "title": "Pain Atlas AI Factory Content Object",
+  "description": "Canonical Aggregate Root for one content lifecycle.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identity",
+    "lifecycle",
+    "classification",
+    "intent",
+    "references",
+    "current_outputs"
+  ],
+  "properties": {
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "content_id",
+        "canonical_key",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "content_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonical_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parent_content_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "root_content_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_state"
+      ],
+      "properties": {
+        "current_state": {
+          "type": "string",
+          "enum": [
+            "TOPIC_APPROVED",
+            "RESEARCHING",
+            "RESEARCH_COMPLETED",
+            "SCRIPT_DRAFTED",
+            "FACT_CHECKED",
+            "SCRIPT_APPROVED",
+            "SCENE_PLANNED",
+            "ASSETS_READY",
+            "VIDEO_QA_PASSED",
+            "PUBLISHED",
+            "ANALYTICS_READY",
+            "LEARNING_COMPLETED"
+          ]
+        },
+        "state_entered_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "state_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "blocked": {
+          "type": "boolean"
+        },
+        "blocked_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "completion": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "language"
+      ],
+      "properties": {
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "shorts",
+            "long_form"
+          ]
+        },
+        "language": {
+          "type": "string",
+          "minLength": 2
+        },
+        "series_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "topic_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "target_audience": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "channel_targets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sensitivity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "working_title",
+        "core_question",
+        "objective"
+      ],
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "working_title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hook": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "core_question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "audience_problem": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "desired_response": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "objective": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason_selected": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "differentiation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recommendation_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "priority": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "references": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "research_package_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "claim_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decision_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "experiment_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "current_outputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "script_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "script_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scene_plan_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "asset_set_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "render_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "thumbnail_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subtitle_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "voice_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "quality_summary": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "publication_summary": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "performance_summary": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "learning_summary": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "cost_summary": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "provenance_summary": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workflow_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "workflow_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "workflow_stage": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "active_run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "retry_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "idempotency_key": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "last_error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "audit_summary": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true
+    }
+  }
+}

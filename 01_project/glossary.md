@@ -1,9 +1,7 @@
 # 기묘한 통증도감 AI Factory Glossary
-> Version: 0.1.0
-> Status: Initial Glossary Baseline
-> Parent: `01_project/project-charter.md`
-> Description: 프로젝트 전체에서 사용하는 핵심 용어의 공통 정의
 
+> Version: 0.1.1
+> Purpose: 프로젝트 전체에서 사용하는 핵심 용어를 동일하게 정의한다.
 
 ## A
 
@@ -183,3 +181,18 @@ Automation
 Human Override
 Learning
 ```
+
+
+## Canonical State Terminology
+
+`Content State`와 `Workflow Stage`를 구분한다.
+
+### Canonical Content State
+
+`TOPIC_APPROVED`, `RESEARCHING`, `RESEARCH_COMPLETED`, `SCRIPT_DRAFTED`, `FACT_CHECKED`, `SCRIPT_APPROVED`, `SCENE_PLANNED`, `ASSETS_READY`, `VIDEO_QA_PASSED`, `PUBLISHED`, `ANALYTICS_READY`, `LEARNING_COMPLETED`
+
+### Workflow Stage
+
+`DAILY_TRIGGER`, `TREND_DISCOVERY`, `TOPIC_RECOMMENDING`, `AWAITING_CONFIRMATION`, `PLANNING`, `FACT_CHECK`, `SAFETY_CHECK`, `BRAND_CHECK`, `ASSET_GENERATION`, `ASSET_QA`, `RENDERING`, `VIDEO_QA`, `SCHEDULING`, `SCHEDULED`, `PUBLISHING`, `ANALYTICS_LEARNING` 등 실행 단계.
+
+기존의 `DRAFT`, `APPROVED`, `IN_PRODUCTION`, `READY`, `FAILED`, `CANCELLED` 등의 표현은 Canonical Content State Enum으로 사용하지 않으며, 필요한 경우 Workflow/Operation/Exception 용어로 제한한다.
